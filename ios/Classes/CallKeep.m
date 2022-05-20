@@ -235,20 +235,32 @@ static CXProvider* sharedProvider;
     */
 
     NSDictionary *dic = payload.dictionaryPayload;
+    NSLog(@"[DIC Payload]: %@", dic);
 
-    if (dic[@"aps"] != nil) {
-        NSLog(@"Do not use the 'alert' format for push type %@.", payload.type);
-        if(completion != nil) {
+//    if (dic[@"aps"] != nil) {
+//        NSLog(@"Do not use the 'alert' format for push type %@.", payload.type);
+//        if(completion != nil) {
+//            completion();
+//        }
+//        return;
+//    }
+    
+    NSDictionary *aps = dic[@"aps"];
+    NSDictionary *alert = aps[@"alert"];
+    if (alert == nil) {
+        NSLog(@"Pushkit is not use 'alert' format");
+        if (completion != nil) {
             completion();
         }
         return;
     }
-
-    NSString *uuid = dic[@"uuid"];
-    NSString *callerId = dic[@"caller_id"];
-    NSString *callerName = dic[@"caller_name"];
-    BOOL hasVideo = [dic[@"has_video"] boolValue];
-    NSString *callerIdType = dic[@"caller_id_type"];
+    dic = alert;
+    
+    NSString *uuid = dic[@"apns_session_id"];
+    NSString *callerId = @"call you in Pancake";
+    NSString *callerName = dic[@"caller"];
+    BOOL hasVideo = [dic[@"type"] isEqualToString:@"video"];
+    NSString *callerIdType = @"generic";
    
 
     if( uuid == nil) {
